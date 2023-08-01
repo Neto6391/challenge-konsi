@@ -11,6 +11,10 @@ packages = [{include = "challenge_konsi"}]
 python = "^3.11"
 fastapi = "^0.100.1"
 uvicorn = {extras = ["standard"], version = "^0.23.2"}
+aiohttp = "^3.8.5"
+pydantic = "^2.1.1"
+python-dotenv = "^1.0.0"
+argparse = "^1.4.0"
 
 
 [build-system]
