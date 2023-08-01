@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "challenge-konsi"
+version = "0.1.0"
+description = ""
+authors = ["Neto6391"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "challenge_konsi"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.100.1"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
