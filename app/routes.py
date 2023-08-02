@@ -9,5 +9,8 @@ router = APIRouter()
 benefit_controller = BenefitController()
 
 @router.post('/api/cpf/create')
-def create_benefit_by_cpf(data: CPFBenefitData):
-    return benefit_controller.create_benefit_by_cpf(data)
+async def create_benefit_by_cpf(data: CPFBenefitData):
+    try:
+        await benefit_controller.create_benefit_by_cpf(data)
+    except Exception as e:
+        raise ValueError(f'Something is happen {e}')
