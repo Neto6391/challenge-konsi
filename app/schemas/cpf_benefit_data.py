@@ -13,5 +13,5 @@ class CPFBenefitData(BaseModel):
     def validate_cpf(cls, cpf):
         pattern = re.compile(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$')
         if not pattern.match(cpf):
-            raise ValueError('CPF inválido. O formato correto é XXX.XXX.XXX-XX.')
+            raise ValueError('CPF invalid. The correct format is XXX.XXX.XXX-XX.')
         return cpf
