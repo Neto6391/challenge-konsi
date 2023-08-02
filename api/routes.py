@@ -1,8 +1,8 @@
 import os
 from fastapi import APIRouter
 
-from app.schemas.cpf_benefit_data import CPFBenefitData
-from app.controllers.benefit_controller import BenefitController
+from api.schemas.cpf_benefit_data import CPFBenefitData
+from api.controllers.benefit_controller import BenefitController
 
 
 router = APIRouter()

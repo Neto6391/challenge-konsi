@@ -3,9 +3,9 @@ import asyncio
 from typing import List
 
 
-from app.producer.producer import Producer
-from app.consumer.consumer import Consumer
-from app.utils.rabbitmq_manager_factory import RabbitMQFactory
+from api.producer.producer import Producer
+from api.consumer.consumer import Consumer
+from api.utils.rabbitmq_manager_factory import RabbitMQFactory
 from config.logging import logger
 
 class BenefitService:
