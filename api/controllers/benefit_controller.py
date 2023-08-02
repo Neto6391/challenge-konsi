@@ -1,5 +1,5 @@
-from app.schemas.cpf_benefit_data import CPFBenefitData
-from app.services.benefit_service import BenefitService
+from api.schemas.cpf_benefit_data import CPFBenefitData
+from api.services.benefit_service import BenefitService
 from config.logging import logger
 
 class BenefitController:

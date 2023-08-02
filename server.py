@@ -1,11 +1,9 @@
-import os
 import argparse
 from dotenv import load_dotenv
 import uvicorn
-from main import app
+from api.main import app
 from config.environment import get_config
 
-# Função para carregar as configurações de ambiente
 def load_environment(env):
     load_dotenv(f".env.{env}")
 
