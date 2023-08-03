@@ -13,6 +13,8 @@ class WebDriverConfig(Module):
         options = Options()
         if self.headless:
             options.add_argument('--headless')
+            print("True headless?")
+        
         driver_path = ChromeDriverManager().install()
         binder.bind(webdriver.Chrome, to=webdriver.Chrome(service=Service(executable_path=driver_path), options=options))
 

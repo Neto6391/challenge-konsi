@@ -17,4 +17,4 @@ class Consumer:
             logger.info(f"Received: {body}")
 
             if input_callback is not None:
-                input_callback(body)
+                await input_callback(body)

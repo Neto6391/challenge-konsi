@@ -7,27 +7,25 @@ from web_crawler_app.crawl_pages.login_page import LoginPage
 
 class WebScrapperApp:
     @inject
-    def __init__(self, login_page: LoginPage, benefits_by_cpf_page: BenefitsByCPFSearchPage):
+    def __init__(self, login_page: LoginPage, benefits_by_cpf_page: BenefitsByCPFSearchPage, url: str):
         self.login_page = login_page
         self.benefits_by_cpf_page = benefits_by_cpf_page
+        self.url = url
         self.results = None
 
-    def run(self, username, password, cpf):
-        with ThreadPoolExecutor() as executor:
-            login_future = executor.submit(self.login_page.login, username, password) 
-            
-        login_future.result()
-        
-        self.benefits_by_cpf_page.click_benefits_by_cpf_menu()
 
-        with ThreadPoolExecutor() as executor:
-            search_future = executor.submit(self.benefits_by_cpf_page.search_by_cpf, cpf)
-        
-        search_future.result()
+    async def run(self, username, password, cpf):
+        print("antes o primeiro await")
+        # Executar o login de forma assíncrona
+        await self.login_page.perfom_login_async(username, password)
+        print("apos o primeiro await")
 
-        with ThreadPoolExecutor() as executor:
-            collect_results_future = executor.submit(self.benefits_by_cpf_page.collect_results)
+        # Clicar no menu de "benefícios por CPF"
+        await self.benefits_by_cpf_page.click_benefits_by_cpf_menu()
+        print("apos o segundo await")
 
-        self.results = collect_results_future.result()
+        await self.benefits_by_cpf_page.search_by_cpf(cpf)
+
+        self.results = await self.benefits_by_cpf_page.collect_results()
 
         return self.results

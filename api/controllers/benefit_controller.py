@@ -1,3 +1,4 @@
+import asyncio
 from api.schemas.cpf_benefit_data import CPFBenefitData
 from api.services.benefit_service import BenefitService
 from config.logging import logger
@@ -8,9 +9,9 @@ class BenefitController:
         self.consumer_data: CPFBenefitData = None
         self.benefit_service = BenefitService()
 
-    def crawl_portal_extrato_consumer(self, cpf):
+    async def crawl_portal_extrato_consumer(self, cpf):
         logger.info(f"Consuming Queue")
-        crawl_benefit_cpf(username=self.consumer_data.username, password=self.consumer_data.password, cpf=cpf)
+        await crawl_benefit_cpf(username=self.consumer_data.username, password=self.consumer_data.password, cpf=cpf)
         
 
     async def create_benefit_by_cpf(self, data: CPFBenefitData):
