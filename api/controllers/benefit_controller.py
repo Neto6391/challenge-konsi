@@ -1,4 +1,3 @@
-import asyncio
 from api.schemas.cpf_benefit_data import CPFBenefitData
 from api.services.benefit_service import BenefitService
 from config.logging import logger
@@ -10,8 +9,13 @@ class BenefitController:
         self.benefit_service = BenefitService()
 
     async def crawl_portal_extrato_consumer(self, cpf):
-        logger.info(f"Consuming Queue")
-        await crawl_benefit_cpf(username=self.consumer_data.username, password=self.consumer_data.password, cpf=cpf)
+        try:
+            logger.info(f"Consuming Queue")
+            benefit = await crawl_benefit_cpf(username=self.consumer_data.username, password=self.consumer_data.password, cpf=cpf)
+            logger.info(f"Consumer Queue -> {benefit}")
+        except Exception as e:
+            logger.error(f'Error when consuming queue {e}')
+        
         
 
     async def create_benefit_by_cpf(self, data: CPFBenefitData):
@@ -23,3 +27,4 @@ class BenefitController:
         except Exception as e:
             logger.error(f'Found error in processing queues: {e}')
             raise
+    

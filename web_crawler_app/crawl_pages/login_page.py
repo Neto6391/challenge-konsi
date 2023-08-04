@@ -1,7 +1,6 @@
 from injector import inject, singleton
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import asyncio
 
 @singleton
 class LoginPage:

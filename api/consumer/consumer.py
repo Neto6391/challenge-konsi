@@ -16,5 +16,11 @@ class Consumer:
             body = message.body.decode()
             logger.info(f"Received: {body}")
 
-            if input_callback is not None:
-                await input_callback(body)
+            try:
+                if input_callback is not None:
+                    await input_callback(body)
+            
+            except Exception as e:
+                logger.error(f"Error processing message: {e}")
+
+            
