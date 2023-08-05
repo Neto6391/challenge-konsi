@@ -54,6 +54,6 @@ class RedisCache:
         try:
             if self.redis is not None:
                 self.redis.close()
-                logger.info("Redis Desconnect!")
+                logger.info("Desconnect Redis!")
         except Exception as e:
             print("Something was happening: ", e)
