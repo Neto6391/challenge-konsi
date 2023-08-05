@@ -1,6 +1,9 @@
 import asyncio
+from typing import List
 from api.repository.benefit_repository import BenefitRepository
 from api.schemas.cpf_benefit_data import CPFBenefitData
+from api.schemas.cpf_data import CpfData
+
 from api.services.benefit_service import BenefitService
 from config.logging import logger
 from config.rabbitmq_manager import RabbitMQManager
@@ -9,7 +12,12 @@ from web_crawler_app.main import crawl_benefit_cpf
 
 
 class BenefitController:
-    def __init__(self, rabbitmq_manager: RabbitMQManager, redis_cache: RedisCache, benefit_repository: BenefitRepository):
+    def __init__(
+            self, 
+            benefit_repository: BenefitRepository,
+            rabbitmq_manager: RabbitMQManager = None, 
+            redis_cache: RedisCache = None, 
+    ):
         self.consumer_data: CPFBenefitData = None
         self.benefit_service = BenefitService(rabbitmq_manager=rabbitmq_manager, queue_name="cpf_queue")
         self.redis_cache = redis_cache
@@ -22,7 +30,7 @@ class BenefitController:
             if has_cpf is None:
                 benefit = await crawl_benefit_cpf(username=self.consumer_data.username, password=self.consumer_data.password, cpf=cpf)
                 if benefit is not None:
-                    self.redis_cache.store_data(cpf, benefit)
+                    self.redis_cache.store_data(cpf, str(benefit))
                     await self.benefit_repository.index_document(index_name="cpf_index", id=cpf, data={
                         "cpf": cpf,
                         "benefit": int(benefit)
@@ -31,7 +39,7 @@ class BenefitController:
                 benefit = has_cpf
                 await self.benefit_repository.index_document(index_name="cpf_index", id=cpf, data={
                         "cpf": cpf,
-                        "benefit": int(benefit)
+                        "benefit": int(str(benefit))
                     })
             logger.info(f"Consumer Queue -> {benefit}")
             
@@ -50,4 +58,17 @@ class BenefitController:
         except Exception as e:
             logger.error(f'Found error in processing queues: {e}')
             raise
-    
+
+    async def get_cpf_data_by_cpf(self, cpf: str) -> List[CpfData]:
+        try:
+            return await self.benefit_repository.get_cpf_data_by_cpf(cpf)
+        except Exception as e:
+            logger.error(f'Found when get cpf data: {e}')
+            raise
+
+    async def get_all_cpf_data(self, page: int, page_size: int) -> List[CpfData]:
+        try:
+            return await self.benefit_repository.get_all_cpf_data(page=page, page_size=page_size)
+        except Exception as e:
+            logger.error(f'Found when get cpf data: {e}')
+            raise

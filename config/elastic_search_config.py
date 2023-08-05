@@ -32,11 +32,19 @@ class ElasticConfig:
                 logger.info("Cached Indice!")
             return True
         except RequestError as e:
-            logger.error(f"Error creating index: {e}")
+            logger.error(f'Error creating index: {e}')
             return False
     
     async def create_index(self, index: str, id: str, document: any):
         await self.client.index(index=index, id=id, document=document)
         logger.info("Document added in index!")
+
+    async def search(self, index, query, from_, size):
+        try:
+            results = await self.client.search(index=index, body=query, from_=from_, size=size)
+            return results
+        except RequestError as e:
+            logger.error(f'Error searching in Elasticsearch: {e}')
+            return None
     
 
