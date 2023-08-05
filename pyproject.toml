@@ -21,6 +21,7 @@ selenium = "^4.11.2"
 webdriver-manager = "^4.0.0"
 injector = "^0.21.0"
 redis = "^4.6.0"
+elasticsearch = {extras = ["async"], version = "^8.9.0"}
 
 
 [build-system]
