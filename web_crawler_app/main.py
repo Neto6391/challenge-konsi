@@ -3,6 +3,7 @@ from config.web_driver_config import WebDriverConfig
 from config.web_driver_manager import WebDriverManager
 
 from web_crawler_app.app.web_scrapper import WebScrapperApp
+from selenium.common.exceptions import WebDriverException
 
 
 async def crawl_benefit_cpf(username: str, password: str, cpf: str):
@@ -16,5 +17,7 @@ async def crawl_benefit_cpf(username: str, password: str, cpf: str):
                 return benefit
             else:
                 return None
+    except WebDriverException:
+        return None
     except Exception as e:
         return None

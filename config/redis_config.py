@@ -1,31 +1,46 @@
 import json
-import aioredis
+
+from redis import Redis
+from config.logging import logger
 
 class RedisCache:
-    def __init__(self, host='localhost', port=6379, db=0):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._connect(*args, **kwargs)
+        return cls._instance
+
+    def _connect(self, host, port, db=0):
         self.host = host
         self.port = port
         self.db = db
+        self.redis = None
 
-    async def _connect(self):
-        self.redis = await aioredis.create_redis_pool(f'redis://{self.host}:{self.port}/{self.db}')
+    def initialize(self):
+        try:
+            self.redis = Redis(self.host, self.port, self.db)
+            logger.info("Redis Connected!")
+        except Exception as e:
+            logger.error(f"Error connecting to Redis: {e}")
+            raise
+            
 
-    async def store_data(self, key, data):
+    def store_data(self, key, data):
         try:
             data_json = json.dumps(data)
-            if not hasattr(self, 'redis'):
-                await self._connect()
-            await self.redis.set(key, data_json)
+            if self.redis is not None:
+                self.redis.set(key, data_json)
             return True
         except Exception as e:
             print("Error storing data in Redis: ", e)
             return False
 
-    async def get_data(self, key):
+    def get_data(self, key):
         try:
-            if not hasattr(self, 'redis'):
-                await self._connect()
-            data_json = await self.redis.get(key)
+            if self.redis is not None:
+                data_json = self.redis.get(key)
             if data_json:
                 data = json.loads(data_json)
                 return data
@@ -35,10 +50,10 @@ class RedisCache:
             print("Error getting data from Redis: ", e)
             return None
         
-    async def close(self):
+    def close(self):
         try:
-            if hasattr(self, 'redis'):
+            if self.redis is not None:
                 self.redis.close()
-                await self.redis.wait_closed()
+                logger.info("Redis Desconnect!")
         except Exception as e:
             print("Something was happening: ", e)

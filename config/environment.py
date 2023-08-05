@@ -25,7 +25,8 @@ class Config:
     def get_redis_config(self):
         return {
             'host': self.REDIS_HOST,
-            'port': self.REDIS_PORT
+            'port': self.REDIS_PORT,
+            'db': 0
         }
 
     def get_rabbitmq_config(self):
