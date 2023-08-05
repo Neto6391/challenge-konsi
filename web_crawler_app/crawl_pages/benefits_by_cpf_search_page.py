@@ -1,3 +1,4 @@
+import asyncio
 from injector import inject, singleton
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,43 +11,46 @@ class BenefitsByCPFSearchPage:
     def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
 
-    def click_benefits_by_cpf_menu(self):
+    async def click_benefits_by_cpf_menu(self):
         benefits_by_cpf_menu = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//ion-button[contains(., 'Encontrar Benefícios de um CPF')]"))
         )
-        self.click_element(benefits_by_cpf_menu)
+        
+        await self.click_element(benefits_by_cpf_menu)
+        
 
-    def search_by_cpf(self, cpf):
-        ion_item_with_cpf_input = WebDriverWait(self.driver, 10).until(
+    async def search_by_cpf(self, cpf):
+        ion_item_with_cpf_input = WebDriverWait(self.driver, 5).until(
             EC.presence_of_element_located((By.XPATH, ".//ion-input[@placeholder='Digite o número do CPF . . .']"))
         )
-        self.click_element(ion_item_with_cpf_input)
+        await self.click_element(ion_item_with_cpf_input)
 
-        self.driver.execute_script("arguments[0].setAttribute('value', arguments[1]);", ion_item_with_cpf_input, cpf)
+        await self.set_element_value(ion_item_with_cpf_input, cpf)
         
-        button_search = WebDriverWait(self.driver, 10).until(
+        button_search = WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.XPATH, ".//ion-button[normalize-space() = 'Procurar']"))
         )
-        self.click_element(button_search)
+        await self.click_element(button_search)
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, ".//ion-card[contains(@class, 'loading')]"))
         )
 
-    def click_element(self, element):
-        self.driver.execute_script("arguments[0].click();", element)
-
-    def collect_results(self):
+    async def collect_results(self):
         benefits_found_card = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//ion-card[.//ion-card-header[contains(., 'BENEFÍCIOS ENCONTRADOS!')]]"))
-        )
-
-        ion_item = WebDriverWait(benefits_found_card, 10).until(
-            EC.presence_of_element_located((By.XPATH, ".//ion-item"))
-        )
-        
-
-        ion_label = WebDriverWait(ion_item, 10).until(
-            EC.presence_of_element_located((By.XPATH, ".//ion-label"))
-        )
+            EC.presence_of_element_located((By.XPATH, "//ion-card-title[text()='BENEFÍCIOS ENCONTRADOS!']//ancestor::ion-card"))
+        )        
+        ion_item = benefits_found_card.find_element(By.XPATH, ".//ion-item")
+        ion_label = ion_item.find_element(By.XPATH, ".//ion-label")
         value_ion_label = ion_label.get_attribute("textContent")
+        
         return value_ion_label
+
+    async def execute_script_async(self, script, *args):
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.driver.execute_script, script, *args)
+        
+    async def set_element_value(self, element, value):
+        await self.execute_script_async("arguments[0].setAttribute('value', arguments[1]);", element, value)
+
+    async def click_element(self, element):
+        await self.execute_script_async("arguments[0].click();", element)

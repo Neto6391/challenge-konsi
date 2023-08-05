@@ -1,5 +1,5 @@
 import aio_pika
-from config.rabbitmq_config import RabbitMQManager
+from config.rabbitmq_manager import RabbitMQManager
 from config.logging import logger
 
 class Consumer:
@@ -16,5 +16,11 @@ class Consumer:
             body = message.body.decode()
             logger.info(f"Received: {body}")
 
-            if input_callback is not None:
-                input_callback(body)
+            try:
+                if input_callback is not None:
+                    await input_callback(body)
+            
+            except Exception as e:
+                logger.error(f"Error processing message: {e}")
+
+            
