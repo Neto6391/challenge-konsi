@@ -17,10 +17,10 @@ python-dotenv = "^1.0.0"
 argparse = "^1.4.0"
 aio-pika = "^9.2.0"
 logging = "^0.4.9.6"
-aioredis = "^2.0.1"
 selenium = "^4.11.2"
 webdriver-manager = "^4.0.0"
 injector = "^0.21.0"
+redis = "^4.6.0"
 
 
 [build-system]
