@@ -1,5 +1,5 @@
 import aio_pika
-from config.rabbitmq_config import RabbitMQManager
+from config.rabbitmq_manager import RabbitMQManager
 from config.logging import logger
 
 class Consumer:

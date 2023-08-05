@@ -63,7 +63,6 @@ CONFIG_MAP = {
     'production': ProductionConfig
 }
 
-# Função para obter a configuração com base no ambiente
 def get_config(environment):
     config_class = CONFIG_MAP.get(environment, DevelopmentConfig)
     return config_class(environment)
